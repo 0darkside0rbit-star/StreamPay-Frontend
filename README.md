@@ -4,9 +4,9 @@
 recipients in a continuous flow instead of lump sums: create a stream, watch funds accrue, pause or stop at any time,
 and let the recipient withdraw what has vested.
 
-## Live demo: [https://streampay-frontend-gamma.vercel.app](https://streampay-frontend-gamma.vercel.app)
+## Live demo: [https://streampay-frontend-alpha.vercel.app](https://streampay-frontend-alpha.vercel.app)
 
-> Explore [streams](https://streampay-frontend-gamma.vercel.app/streams), a [stream detail](https://streampay-frontend-gamma.vercel.app/streams/stream-ada), [activity](https://streampay-frontend-gamma.vercel.app/activity) and the in-app [docs](https://streampay-frontend-gamma.vercel.app/docs). The demo needs no wallet and no backend:
+> Explore [streams](https://streampay-frontend-alpha.vercel.app/streams), a [stream detail](https://streampay-frontend-alpha.vercel.app/streams/stream-ada), [activity](https://streampay-frontend-alpha.vercel.app/activity) and the in-app [docs](https://streampay-frontend-alpha.vercel.app/docs). The demo needs no wallet and no backend:
 > the API serves seeded sample data, so every screen is populated.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FStreampay-Org%2FStreamPay-Frontend&env=JWT_SECRET,STELLAR_NETWORK,ALLOWED_ORIGINS)
