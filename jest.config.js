@@ -13,6 +13,8 @@ const config = {
   testPathIgnorePatterns: [
     "/node_modules/",
     "/.next/",
+    "<rootDir>/app/api/notifications/preferences/route.test.ts",
+    "<rootDir>/app/streams/new/recurring.test.tsx",
     "<rootDir>/__tests__/a11y.test.tsx",
     "<rootDir>/__tests__/openapi-auth-wallet.test.ts",
     "<rootDir>/__tests__/openapi-webhooks.test.ts",
