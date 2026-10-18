@@ -260,6 +260,7 @@ export default function MultiRecipientStreamPage() {
       {/* Step progress indicator */}
       <div
         style={{
+          width: "100%",
           maxWidth: "800px",
           margin: "0 auto",
           padding: "1.5rem 1.5rem 0",
@@ -270,7 +271,7 @@ export default function MultiRecipientStreamPage() {
 
       {/* Form body */}
       <section
-        style={{ maxWidth: "800px", margin: "0 auto", padding: "2rem 1.5rem 8rem" }}
+        style={{ width: "100%", maxWidth: "800px", margin: "0 auto", padding: "2rem 1.5rem 4rem" }}
         aria-label="Stream creation form"
       >
         <form onSubmit={handleSubmit} noValidate>
@@ -309,7 +310,7 @@ export default function MultiRecipientStreamPage() {
                   autoComplete="off"
                   value={streamName}
                   onChange={(e) => setStreamName(e.target.value)}
-                  placeholder="e.g. GrantFox Q3 Distribution"
+                  placeholder="e.g. Q3 Contributor Distribution"
                   aria-required="true"
                   style={fieldStyle}
                 />

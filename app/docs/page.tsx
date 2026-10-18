@@ -58,17 +58,20 @@ export default function DocsPage() {
       </p>
 
       <h2 id="api">HTTP API</h2>
+      <div className="docs__table-wrap">
       <table>
         <thead><tr><th>Method</th><th>Path</th><th>Description</th></tr></thead>
         <tbody>
           {apiRoutes.map(([m, p, d]) => (
-            <tr key={p}><td><code>{m}</code></td><td><code>{p}</code></td><td>{d}</td></tr>
+            <tr key={`${m} ${p}`}><td><code>{m}</code></td><td><code>{p}</code></td><td>{d}</td></tr>
           ))}
         </tbody>
       </table>
+      </div>
       <p>The full contract is in <code>openapi.json</code> in the repository.</p>
 
       <h2 id="config">Configuration</h2>
+      <div className="docs__table-wrap">
       <table>
         <thead><tr><th>Variable</th><th>Purpose</th></tr></thead>
         <tbody>
@@ -78,6 +81,7 @@ export default function DocsPage() {
           <tr><td><code>DATABASE_URL</code></td><td>Optional Postgres URL; seeded in-memory data otherwise</td></tr>
         </tbody>
       </table>
+      </div>
       <p>See <code>.env.example</code> for every option.</p>
 
       <h2 id="deploy">Deploying</h2>

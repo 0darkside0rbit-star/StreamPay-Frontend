@@ -203,7 +203,7 @@ export default function NewStreamPage() {
         </section>
       )}
 
-      <section style={{ maxWidth: '560px', margin: '0 auto 1.5rem', padding: '0 1.5rem' }}>
+      <section style={{ width: '100%', maxWidth: '560px', margin: '0 auto 1.5rem', padding: '0 1.5rem' }}>
         <div
           className="csf-cta-banner"
           data-testid="csf-cta-banner"
@@ -220,7 +220,7 @@ export default function NewStreamPage() {
         </div>
       </section>
 
-      <section style={{ maxWidth: '560px', margin: '0 auto', padding: '0 1.5rem' }}>
+      <section style={{ width: '100%', maxWidth: '560px', margin: '0 auto', padding: '0 1.5rem' }}>
         <div
           className={`create-stream-status ${success ? 'create-stream-status--active' : 'create-stream-status--draft'}`}
           role="status"
