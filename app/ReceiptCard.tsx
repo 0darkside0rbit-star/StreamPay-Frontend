@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useEffect } from "react";
 import styles from "./ReceiptCard.module.css";
+import { KbdHint } from "../src/components/KbdHint";
 import { isTextEntry } from "@/lib/keyboard";
 
 const STATUS_LABELS: Record<string, string> = {

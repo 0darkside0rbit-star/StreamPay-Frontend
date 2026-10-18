@@ -302,7 +302,7 @@ export async function GET(request: Request) {
 
       if (hasNext) {
         const nextJob = jobs[startIndex + limit];
-        nextCursor = encodeCompositeCursor({ id: nextJob.id, timestamp: nextJob.requestedAt });
+        nextCursor = encodeCompositeCursor(nextJob.requestedAt, nextJob.id);
       }
 
       const payload = {

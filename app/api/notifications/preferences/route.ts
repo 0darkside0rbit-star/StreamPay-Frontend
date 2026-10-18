@@ -5,6 +5,7 @@
 
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
+import { computeETag, ifNoneMatchMatches } from "@/app/lib/etag";
 import { tryAuthenticateRequest } from "@/app/lib/auth";
 import { getCorrelationContext, logger } from "@/app/lib/logger";
 import { checkRateLimit, getClientIdentity, rateLimitResponse } from "@/app/lib/rate-limit";

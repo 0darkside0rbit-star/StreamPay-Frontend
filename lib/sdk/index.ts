@@ -1,4 +1,5 @@
 import { redactDiagnosticBody } from "./redact";
+import { SdkErrorCode } from "./types";
 
 export { SdkErrorCode } from "./types";
 export type StreamStatus = "draft" | "active" | "paused" | "ended";

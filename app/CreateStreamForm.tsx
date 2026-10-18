@@ -44,7 +44,7 @@
 
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { KbdHint } from "../src/components/KbdHint";
 import { Skeleton } from "../src/components/Skeleton";
 import { LiveRegion } from "../src/components/LiveRegion";

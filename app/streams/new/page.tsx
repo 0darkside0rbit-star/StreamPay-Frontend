@@ -39,6 +39,15 @@ function shortenAddress(address: string): string {
  * a bottom-sheet summary before final submission.
  */
 export default function NewStreamPage() {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
+    const q = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(q.matches);
+    const onChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    q.addEventListener?.('change', onChange);
+    return () => q.removeEventListener?.('change', onChange);
+  }, []);
   const [recipient, setRecipient] = useState('');
   const [amount, setAmount] = useState('');
   const [token, setToken] = useState<'XLM' | 'USDC'>('XLM');

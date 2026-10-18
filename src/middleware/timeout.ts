@@ -177,3 +177,7 @@ export async function withRouteTimeout(
 ): Promise<NextResponse> {
   return withTimeout(timeoutMs, request, work);
 }
+
+/** Default wall-clock budget for webhook routes. Override via `WEBHOOK_TIMEOUT_MS`. */
+export const WEBHOOK_TIMEOUT_MS =
+  Number(process.env.WEBHOOK_TIMEOUT_MS) || 10_000;

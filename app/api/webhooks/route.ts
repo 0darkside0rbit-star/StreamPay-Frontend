@@ -3,6 +3,7 @@ import { registry, webhookCounter, webhookDuration } from "@/src/metrics/registr
 import { logger } from "@/app/lib/logger";
 import { webhookPayloadSchema } from "@/src/validators/webhooks";
 import { withRouteTimeout } from "@/src/middleware/timeout";
+import { applyRateLimit } from "@/src/middleware/rateLimit";
 
 // Prometheus metrics endpoint
 async function handleWebhooksGet(request: Request) {
