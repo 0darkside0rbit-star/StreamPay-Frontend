@@ -129,5 +129,5 @@ export async function POST(
 
       return NextResponse.json(payload);
     });
-  });
+  }, { resourceId: id, actorId: actorAddress ?? undefined });
 }
