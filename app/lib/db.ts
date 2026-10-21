@@ -44,6 +44,7 @@ export interface StreamRepository {
   readonly activity: KeyValueStore<string, ActivityEvent>;
   readonly streams: KeyValueStore<string, Stream>;
   readonly users: KeyValueStore<string, User>;
+  getMultiGroupStreamIds(groupId: string): string[];
   reset(): void;
   withLock<T>(id: string, callback: () => Promise<T>): Promise<T>;
 }

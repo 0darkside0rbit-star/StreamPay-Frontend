@@ -81,6 +81,7 @@ interface MultiRecipientLegSummary {
   address: string;
   percentage: string;
   amount: string;
+  status: string;
 }
 
 /** The 201 body returned by this endpoint. */
@@ -261,6 +262,7 @@ async function handleMultiRecipientPost(request: Request) {
       address: allocation.address,
       percentage: leg.multiPercentage,
       amount: amountText,
+      status: leg.status,
     };
   });
 
@@ -278,7 +280,10 @@ async function handleMultiRecipientPost(request: Request) {
     created_at: now,
     settlement: null,
     recipients,
-    links: { self: "/api/v2/streams/multi", collection: "/api/v2/streams" },
+    links: {
+      self: `/api/v2/streams/multi/${groupId}`,
+      collection: "/api/v2/streams",
+    },
   };
 
   if (cacheToken) {
