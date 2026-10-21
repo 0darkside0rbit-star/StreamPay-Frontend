@@ -62,6 +62,7 @@ export interface CancellationSplit {
 
 export interface Stream {
   id: string;
+  tenant?: string;
   recipient: string;
   rate: string;
   schedule: string;
