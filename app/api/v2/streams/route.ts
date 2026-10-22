@@ -217,7 +217,9 @@ async function handleV2StreamsPost(request: Request) {
     ownership,
   };
 
-  db.streams.set(id, newStream);
+  if (!newStream) {
+    return errorResponse("ID_GENERATION_FAILED", "Failed to generate unique stream identifier", 500);
+  }
 
   const stream = toV2Stream(dbStreamToV1(newStream));
   const payload = stream;

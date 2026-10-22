@@ -7,6 +7,7 @@ import {
   getStore,
   idempotencyToken,
   setIdempotency,
+  withLock,
 } from "@/app/lib/db";
 import {
   decodeStreamCursor,
