@@ -72,7 +72,7 @@ import {
 } from "@/app/lib/db";
 import { errorResponse } from "@/app/lib/errors/server";
 import { logger } from "@/app/lib/logger";
-import { validateCreateStreamBody } from "@/app/lib/stream-validation";
+import { parseCreateStreamBody, type NormalisedCreateStreamInput } from "@/app/lib/stream-validation";
 import { checkTokenAllowed, normaliseToken } from "@/app/lib/token-allowlist";
 import { tryAuthenticateRequest } from "@/app/lib/auth";
 import { TimeoutError } from "@/app/lib/with-timeout";
@@ -240,7 +240,7 @@ function resolveCallerId(request: Request): string {
 
 async function validateRow(
   row: NormalisedRow,
-): Promise<{ errors: RowError[]; normalisedToken?: string }> {
+): Promise<{ errors: RowError[]; normalisedToken?: string; parsed?: NormalisedCreateStreamInput }> {
   const errors: RowError[] = [];
 
   if (!row.recipient) {
@@ -270,16 +270,17 @@ async function validateRow(
   if (errors.length > 0) return { errors };
 
   // Use the shared stream validation for deeper checks
-  const fieldErrors = validateCreateStreamBody(row as unknown as Record<string, unknown>);
-  for (const fe of fieldErrors) {
-    errors.push({
-      field: fe.field,
-      code: fe.code,
-      message: fe.message,
-    });
+  const parseResult = parseCreateStreamBody(row as unknown as Record<string, unknown>);
+  if (!parseResult.success) {
+    for (const fe of parseResult.errors) {
+      errors.push({
+        field: fe.field,
+        code: fe.code,
+        message: fe.message,
+      });
+    }
+    return { errors };
   }
-
-  if (errors.length > 0) return { errors };
 
   // Token allowlist check
   const tokenStr = row.token || "XLM";
@@ -306,7 +307,7 @@ async function validateRow(
     return { errors };
   }
 
-  return { errors, normalisedToken };
+  return { errors, normalisedToken, parsed: parseResult.data };
 }
 
 // ── Route handler ─────────────────────────────────────────────────────────────
@@ -474,13 +475,13 @@ export async function POST(request: Request) {
           }
 
           const row = normalisedRows[i];
-          const { errors: rowErrors, normalisedToken } = await validateRow(row);
+          const { errors: rowErrors, normalisedToken, parsed } = await validateRow(row);
 
           if (signal.aborted) {
             throw new TimeoutError(timeoutMs);
           }
 
-          if (rowErrors.length > 0 || !normalisedToken) {
+          if (rowErrors.length > 0 || !normalisedToken || !parsed) {
             results.push({ row: i + 1, status: "error", errors: rowErrors });
             failed++;
             continue;
@@ -543,9 +544,9 @@ export async function POST(request: Request) {
             createdAt: now,
             id,
             nextAction: "start" as const,
-            rate: row.rate,
-            recipient: row.recipient,
-            schedule: row.schedule,
+            rate: parsed.rate,
+            recipient: parsed.recipient,
+            schedule: parsed.schedule,
             status: "draft" as const,
             updatedAt: now,
             token: normalisedToken,

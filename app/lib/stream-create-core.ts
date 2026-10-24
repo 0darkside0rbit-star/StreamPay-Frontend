@@ -1,6 +1,6 @@
 import { getStore } from "@/app/lib/db";
 import { checkTokenAllowed, normaliseToken } from "@/app/lib/token-allowlist";
-import { validateCreateStreamBody, type ValidationError } from "@/app/lib/stream-validation";
+import { parseCreateStreamBody, type ValidationError } from "@/app/lib/stream-validation";
 import type { Stream } from "@/app/types/openapi";
 
 export type CreateStreamCoreResult =
@@ -17,18 +17,19 @@ export async function createStreamCore(
   body: Record<string, unknown>,
   options: { dryRun: boolean; extras?: Partial<Stream> },
 ): Promise<CreateStreamCoreResult> {
-  const validationErrors = validateCreateStreamBody(body);
-  if (validationErrors.length > 0) {
+  const parseResult = parseCreateStreamBody(body);
+  if (!parseResult.success) {
     return {
       ok: false,
       status: 422,
       code: "VALIDATION_ERROR",
       message: "One or more fields are invalid.",
-      details: validationErrors,
+      details: parseResult.errors,
     };
   }
+  const parsed = parseResult.data;
 
-  const rawToken = (body.token as string | undefined)?.trim() || "XLM";
+  const rawToken = parsed.token?.trim() || "XLM";
   let token: string;
   try {
     token = normaliseToken(rawToken);
@@ -57,9 +58,9 @@ export async function createStreamCore(
     createdAt: now,
     id: `${options.dryRun ? "preview" : "stream"}-${crypto.randomUUID().slice(0, 8)}`,
     nextAction: "start",
-    rate: (body.rate as string).trim(),
-    recipient: (body.recipient as string).trim(),
-    schedule: (body.schedule as string).trim().toLowerCase(),
+    rate: parsed.rate,
+    recipient: parsed.recipient,
+    schedule: parsed.schedule,
     status: "draft",
     updatedAt: now,
     token,
