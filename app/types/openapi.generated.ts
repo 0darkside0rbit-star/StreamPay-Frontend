@@ -137,6 +137,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/streams/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Bulk-import payment streams from CSV or JSON rows
+         * @description Validates and bulk-imports up to 500 payment streams with partial-import semantics (207 Multi-Status).
+         *
+         *     When `dryRun=false` (the default), the `Idempotency-Key` header is required. Requests are fingerprinted by their canonical row list: replaying the same key and rows returns the original 207 response; reusing a key with different rows returns 409 `IDEMPOTENCY_CONFLICT`; a concurrent replay while the first request is in flight returns 409 `IDEMPOTENCY_IN_FLIGHT`.
+         *
+         *     Each row is identified by an optional `external_id` column/field or a SHA-256 hash of the normalised `(recipient, rate, schedule, token, memo)` tuple. Duplicate rows within the same batch or previously imported by the same caller are reported with `status: "duplicate"` and the existing `streamId`.
+         */
+        post: operations["importStreams"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/streams/search": {
         parameters: {
             query?: never;
@@ -2069,6 +2093,88 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    importStreams: {
+        parameters: {
+            query?: {
+                /** @description When `true`, validates rows without persisting streams or touching the idempotency store. */
+                dryRun?: boolean;
+            };
+            header?: {
+                /** @description Required when `dryRun=false`. Client-generated idempotency key for safe retries. */
+                "Idempotency-Key"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "text/csv": string;
+                "application/json": {
+                    /** @description Raw CSV string with header row. */
+                    csv: string;
+                } | {
+                    rows: {
+                        recipient: string;
+                        rate?: string;
+                        amount?: string;
+                        schedule: string;
+                        token?: string;
+                        asset?: string;
+                        memo?: string;
+                        external_id?: string;
+                    }[];
+                };
+            };
+        };
+        responses: {
+            /** @description Multi-Status per-row import summary and results. */
+            207: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        summary: {
+                            total: number;
+                            valid: number;
+                            failed: number;
+                            imported?: number;
+                        };
+                        results: {
+                            row: number;
+                            /** @enum {string} */
+                            status: "imported" | "duplicate" | "valid" | "error";
+                            streamId?: string;
+                            errors?: {
+                                field: string;
+                                code: string;
+                                message: string;
+                            }[];
+                        }[];
+                    };
+                };
+            };
+            400: components["responses"]["400"];
+            /** @description Idempotency conflict (`IDEMPOTENCY_CONFLICT`) or in-flight request with the same key (`IDEMPOTENCY_IN_FLIGHT`). */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Gateway timeout when persistence exceeds the route deadline. */
+            504: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
             };
         };
     };
