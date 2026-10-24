@@ -78,7 +78,7 @@ export interface paths {
         /**
          * List payment streams (v1, deprecated)
          * @deprecated
-         * @description Returns a cursor-paginated list of streams owned by the authenticated identity. **Deprecated** — use `GET /api/v2/streams` instead.
+         * @description Returns a cursor-paginated list of streams scoped to the caller's tenant (`x-tenant-id`, defaulting to `default-tenant`) and ownership (sender, recipient, owning organisation member, or admin). Unauthenticated requests are restricted to the resolved tenant and omit PII fields (`email`, `label`, `memo`, `partnerId`). `meta.total` reflects the filtered count. **Deprecated** — use `GET /api/v2/streams` instead.
          */
         get: operations["listStreams"];
         put?: never;
@@ -364,7 +364,7 @@ export interface paths {
         };
         /**
          * List payment streams (v2)
-         * @description Returns all streams owned by the authenticated user in the v2 shape (`allowed_actions`, `created_at`, `settlement`).
+         * @description Returns all streams owned by the authenticated user within the caller's tenant (`x-tenant-id`, defaulting to `default-tenant`) in the v2 shape (`allowed_actions`, `created_at`, `settlement`). Visibility includes streams where the caller is the sender, recipient, a member of the owning organisation, or an admin (falling back to tenant-scoped visibility when no verified actor claim is present). `meta.total` reflects the filtered stream count.
          */
         get: operations["listStreamsV2"];
         put?: never;
