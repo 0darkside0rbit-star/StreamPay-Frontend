@@ -20,7 +20,7 @@ const nextConfig = (): NextConfig => ({
     tsconfigPath: 'tsconfig.json',
   },
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   serverExternalPackages: ['pg'],
   experimental: {},
