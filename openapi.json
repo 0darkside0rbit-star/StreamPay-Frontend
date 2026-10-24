@@ -475,19 +475,28 @@
         "type": "object",
         "required": [
           "token",
+          "token_type",
           "expires_at"
         ],
         "properties": {
           "token": {
             "type": "string",
-            "description": "Opaque bearer token. Pass as `Authorization: Bearer <token>`.",
-            "example": "tok_R0FCQzEyMzQ1Njc4OTA"
+            "description": "Signed JWT for the authenticated wallet address. Pass as `Authorization: Bearer <token>`.",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJHQ0xIMlNOTTVNVFY0VEdOTk9BRExZT1pKWUlGQlhUSURWU05XNFhQM0xFSTJVUVYyTVo0Nk9ENyIsImlzcyI6InN0cmVhbXBheSIsImF1ZCI6InN0cmVhbXBheS1hcGkiLCJpYXQiOjE3MjE4MDAwMDAsImV4cCI6MTcyMTgwMDkwMH0.sample_signature"
+          },
+          "token_type": {
+            "type": "string",
+            "enum": [
+              "Bearer"
+            ],
+            "example": "Bearer",
+            "description": "Token type, always `Bearer`."
           },
           "expires_at": {
             "type": "string",
             "format": "date-time",
-            "description": "Token expiry (24 hours from issuance).",
-            "example": "2024-01-16T10:00:00.000Z"
+            "description": "Token expiry matching the JWT exp claim (15 minutes from issuance).",
+            "example": "2024-01-15T10:15:00.000Z"
           }
         }
       },
@@ -1368,7 +1377,62 @@
             "$ref": "#/components/responses/400"
           },
           "401": {
-            "$ref": "#/components/responses/401"
+            "description": "Authentication failed — invalid signature, unknown challenge, expired challenge, or address mismatch.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                },
+                "examples": {
+                  "signatureVerificationFailed": {
+                    "summary": "Signature verification failed",
+                    "value": {
+                      "error": {
+                        "code": "UNAUTHORIZED",
+                        "message": "Signature verification failed.",
+                        "request_id": "req_01HZ9ABCDEF"
+                      }
+                    }
+                  },
+                  "challengeUnknown": {
+                    "summary": "Unknown or already consumed challenge",
+                    "value": {
+                      "error": {
+                        "code": "CHALLENGE_UNKNOWN",
+                        "message": "Challenge not found or already consumed.",
+                        "request_id": "req_01HZ9ABCDEF"
+                      }
+                    }
+                  },
+                  "challengeExpired": {
+                    "summary": "Expired challenge",
+                    "value": {
+                      "error": {
+                        "code": "CHALLENGE_EXPIRED",
+                        "message": "Challenge has expired.",
+                        "request_id": "req_01HZ9ABCDEF"
+                      }
+                    }
+                  },
+                  "challengeAddressMismatch": {
+                    "summary": "Address mismatch",
+                    "value": {
+                      "error": {
+                        "code": "CHALLENGE_ADDRESS_MISMATCH",
+                        "message": "Challenge was not issued for this address.",
+                        "request_id": "req_01HZ9ABCDEF"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "422": {
+            "$ref": "#/components/responses/422"
           },
           "429": {
             "description": "IP rate limit exceeded for wallet login (5 req/min per IP).",

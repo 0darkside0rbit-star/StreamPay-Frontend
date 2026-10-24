@@ -1252,14 +1252,20 @@ export interface components {
         };
         WalletToken: {
             /**
-             * @description Opaque bearer token. Pass as `Authorization: Bearer <token>`.
-             * @example tok_R0FCQzEyMzQ1Njc4OTA
+             * @description Signed JWT for the authenticated wallet address. Pass as `Authorization: Bearer <token>`.
+             * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJHQ0xIMlNOTTVNVFY0VEdOTk9BRExZT1pKWUlGQlhUSURWU05XNFhQM0xFSTJVUVYyTVo0Nk9ENyIsImlzcyI6InN0cmVhbXBheSIsImF1ZCI6InN0cmVhbXBheS1hcGkiLCJpYXQiOjE3MjE4MDAwMDAsImV4cCI6MTcyMTgwMDkwMH0.sample_signature
              */
             token: string;
             /**
+             * @description Token type, always `Bearer`.
+             * @example Bearer
+             * @enum {string}
+             */
+            token_type: "Bearer";
+            /**
              * Format: date-time
-             * @description Token expiry (24 hours from issuance).
-             * @example 2024-01-16T10:00:00.000Z
+             * @description Token expiry matching the JWT exp claim (15 minutes from issuance).
+             * @example 2024-01-15T10:15:00.000Z
              */
             expires_at: string;
         };
@@ -1770,7 +1776,17 @@ export interface operations {
                 };
             };
             400: components["responses"]["400"];
-            401: components["responses"]["401"];
+            /** @description Authentication failed — invalid signature, unknown challenge, expired challenge, or address mismatch. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            403: components["responses"]["403"];
+            422: components["responses"]["422"];
             /** @description IP rate limit exceeded for wallet login (5 req/min per IP). */
             429: {
                 headers: {
