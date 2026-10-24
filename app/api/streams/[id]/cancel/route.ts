@@ -62,10 +62,10 @@ import { webhookOutboxStore, toWebhookEvent } from "@/app/lib/webhook-outbox";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function createErrorResponse(code: string, message: string, status: number) {
+function createErrorResponse(code: string, message: string, status: number, legacyCode?: string) {
   const ctx = getCorrelationContext();
   return NextResponse.json(
-    { error: { code, message, request_id: ctx?.request_id } },
+    { error: { code, ...(legacyCode ? { legacy_code: legacyCode } : {}), message, request_id: ctx?.request_id } },
     { status },
   );
 }
